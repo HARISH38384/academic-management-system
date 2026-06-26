@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid" data-aos="fade-up">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">Dashboard Overview</h2>
+            <p class="text-muted mb-0">Welcome back, Admin! Here's what's happening today.</p>
+        </div>
+        <div>
+            <a href="{% url 'generate_report' %}" class="btn btn-primary pulse-btn rounded-pill px-4 shadow-sm"><i class="bi bi-download me-2"></i> Generate Report</a>
+        </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="glass-card p-4 h-100 text-center" style="border-bottom: 4px solid var(--primary);">
+                <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle mb-3" style="width: 60px; height: 60px;">
+                    <i class="bi bi-people-fill fs-3"></i>
+                </div>
+                <h3 class="fw-bold mb-1" id="count-students">0</h3>
+                <p class="text-muted mb-0">Total Students</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="glass-card p-4 h-100 text-center" style="border-bottom: 4px solid var(--secondary);">
+                <div class="d-inline-flex align-items-center justify-content-center bg-info bg-opacity-10 text-info rounded-circle mb-3" style="width: 60px; height: 60px;">
+                    <i class="bi bi-person-workspace fs-3"></i>
+                </div>
+                <h3 class="fw-bold mb-1" id="count-teachers">0</h3>
+                <p class="text-muted mb-0">Total Teachers</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="glass-card p-4 h-100 text-center" style="border-bottom: 4px solid var(--accent);">
+                <div class="d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 text-success rounded-circle mb-3" style="width: 60px; height: 60px;">
+                    <i class="bi bi-calendar-check fs-3"></i>
+                </div>
+                <h3 class="fw-bold mb-1" id="count-attendance">0</h3>
+                <p class="text-muted mb-0">Today's Attendance</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="glass-card p-4 h-100 text-center" style="border-bottom: 4px solid var(--warning);">
+                <div class="d-inline-flex align-items-center justify-content-center bg-warning bg-opacity-10 text-warning rounded-circle mb-3" style="width: 60px; height: 60px;">
+                    <i class="bi bi-building fs-3"></i>
+                </div>
+                <h3 class="fw-bold mb-1" id="count-departments">0</h3>
+                <p class="text-muted mb-0">Departments</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8" data-aos="fade-right" data-aos-delay="100">
+            <div class="glass-card p-4">
+                <h5 class="fw-bold mb-4">Student Growth (Current Year)</h5>
+                <canvas id="growthChart" height="100"></canvas>
+            </div>
+        </div>
+        <div class="col-lg-4" data-aos="fade-left" data-aos-delay="200">
+            <div class="glass-card p-4 h-100">
+                <h5 class="fw-bold mb-4">Department Distribution</h5>
+                <canvas id="deptChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Announcements & Upcoming Events -->
+    <div class="row g-4">
+        <div class="col-md-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="glass-card p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="fw-bold mb-0">Recent Announcements</h5>
+                    <a href="#" class="text-decoration-none small">View All</a>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for announcement in recent_announcements %}
+                    <div class="list-group-item bg-transparent px-0 border-bottom">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1 fw-bold text-primary">{{ announcement.title }}</h6>
+                            <small class="text-muted">{{ announcement.date|date:"M d" }}</small>
+                        </div>
+                        <p class="mb-1 text-sm text-muted">{{ announcement.content|truncatechars:80 }}</p>
+                    </div>
+                    {% empty %}
+                    <div class="text-center p-3 text-muted">No recent announcements.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6" data-aos="fade-up" data-aos-delay="400">
+            <div class="glass-card p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="fw-bold mb-0">Upcoming Events</h5>
+                    <button class="btn btn-sm btn-outline-primary rounded-pill"><i class="bi bi-plus"></i> Add Event</button>
+                </div>
+                <div class="d-flex align-items-center mb-3 p-3 rounded-3" style="background: rgba(79, 70, 229, 0.05);">
+                    <div class="bg-white rounded text-center p-2 me-3 shadow-sm" style="min-width: 60px;">
+                        <span class="d-block text-danger fw-bold">OCT</span>
+                        <span class="d-block fs-5 fw-bold">15</span>
+                    </div>
+                    <div>
+                        <h6 class="mb-0 fw-bold">Annual Tech Symposium</h6>
+                        <small class="text-muted"><i class="bi bi-clock me-1"></i> 10:00 AM - Main Auditorium</small>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center p-3 rounded-3" style="background: rgba(16, 185, 129, 0.05);">
+                    <div class="bg-white rounded text-center p-2 me-3 shadow-sm" style="min-width: 60px;">
+                        <span class="d-block text-success fw-bold">OCT</span>
+                        <span class="d-block fs-5 fw-bold">18</span>
+                    </div>
+                    <div>
+                        <h6 class="mb-0 fw-bold">Guest Lecture on AI</h6>
+                        <small class="text-muted"><i class="bi bi-clock me-1"></i> 02:00 PM - Seminar Hall</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Custom Vanilla JS Counter Animation
+        function animateValue(id, start, end, duration) {
+            if (start === end) return;
+            let obj = document.getElementById(id);
+            if (!obj) return;
+            let range = end - start;
+            let minTimer = 50;
+            let stepTime = Math.abs(Math.floor(duration / range));
+            stepTime = Math.max(stepTime, minTimer);
+            let startTime = new Date().getTime();
+            let endTime = startTime + duration;
+            let timer;
+            function run() {
+                let now = new Date().getTime();
+                let remaining = Math.max((endTime - now) / duration, 0);
+                let value = Math.round(end - (remaining * range));
+                obj.innerHTML = value.toLocaleString();
+                if (value === end) {
+                    clearInterval(timer);
+                }
+            }
+            timer = setInterval(run, stepTime);
+            run();
+        }
+
+        try {
+            animateValue('count-students', 0, {{ student_count|default:"0" }}, 2000);
+            animateValue('count-teachers', 0, {{ teacher_count|default:"0" }}, 2000);
+            animateValue('count-departments', 0, {{ department_count|default:"0" }}, 2000);
+            
+            // Attendance gets a % suffix
+            let attObj = document.getElementById('count-attendance');
+            if (attObj) attObj.innerHTML = "95%";
+        } catch(e) { console.error("Counter error:", e); }
+
+        // Chart.js Configuration
+        const ctxGrowth = document.getElementById('growthChart').getContext('2d');
+        const gradientGrowth = ctxGrowth.createLinearGradient(0, 0, 0, 400);
+        gradientGrowth.addColorStop(0, 'rgba(79, 70, 229, 0.5)');
+        gradientGrowth.addColorStop(1, 'rgba(79, 70, 229, 0.0)');
+
+        new Chart(ctxGrowth, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+                datasets: [{
+                    label: 'Admissions',
+                    data: [65, 85, 120, 150, 200, 250, 400, 450, 500],
+                    borderColor: '#4F46E5',
+                    backgroundColor: gradientGrowth,
+                    borderWidth: 3,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#4F46E5',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { borderDash: [5, 5] } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        const ctxDept = document.getElementById('deptChart').getContext('2d');
+        new Chart(ctxDept, {
+            type: 'doughnut',
+            data: {
+                labels: ['CSE', 'ECE', 'MECH', 'CIVIL', 'IT'],
+                datasets: [{
+                    data: [300, 250, 200, 150, 350],
+                    backgroundColor: ['#4F46E5', '#06B6D4', '#10B981', '#F59E0B', '#EF4444'],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                cutout: '75%',
+                plugins: {
+                    legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true } }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

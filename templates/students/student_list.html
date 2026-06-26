@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid" data-aos="fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">Student Management</h2>
+        <a href="{% url 'student_create' %}" class="btn btn-primary rounded-pill px-4 shadow-sm">
+            <i class="bi bi-person-plus me-2"></i> Add Student
+        </a>
+    </div>
+
+    <div class="glass-card p-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="text-muted">
+                    <tr>
+                        <th>Enrollment No</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Gender</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td class="fw-bold text-primary">{{ student.enrollment_number }}</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="https://ui-avatars.com/api/?name={{ student.first_name }}+{{ student.last_name }}&background=random" class="rounded-circle me-3" width="40" height="40">
+                                <div>
+                                    <h6 class="mb-0 fw-bold">{{ student.first_name }} {{ student.last_name }}</h6>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ student.email }}</td>
+                        <td>{{ student.gender }}</td>
+                        <td>
+                            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">{{ student.status }}</span>
+                        </td>
+                        <td>
+                            <a href="{% url 'student_detail' student.pk %}" class="btn btn-sm btn-outline-info rounded-circle me-1"><i class="bi bi-eye"></i></a>
+                            <a href="{% url 'student_update' student.pk %}" class="btn btn-sm btn-outline-primary rounded-circle me-1"><i class="bi bi-pencil"></i></a>
+                            <a href="{% url 'student_delete' student.pk %}" class="btn btn-sm btn-outline-danger rounded-circle"><i class="bi bi-trash"></i></a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5">
+                            <img src="https://cdni.iconscout.com/illustration/premium/thumb/empty-state-2130362-1800926.png" width="150" alt="No Data">
+                            <h5 class="text-muted mt-3">No Students Found</h5>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
